@@ -37,5 +37,6 @@ export function Product() {
     {/* <input type="text"/> */}
     <input type="text" onChange={e => setQuery(e.target.value)}/>
   </div>
+  
   );
 }

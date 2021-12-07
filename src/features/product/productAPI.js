@@ -1,11 +1,12 @@
 export function fetchGetProducts() {
 
+    let jwt = sessionStorage.getItem('jwt');
+
     return (fetch("https://distribuciones-nacionales-api.herokuapp.com/products", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + 
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjM4ODA4MjA4LCJleHAiOjE2NDE0MDAyMDh9.79yFVPQ8NvDVw792aCp8x2_DXdwVoM_VXLxwF9DpG68"
+                Authorization: "Bearer " + jwt
             }
         })
             .then(res => res.json())
@@ -14,12 +15,14 @@ export function fetchGetProducts() {
 }
 
 export function fetchGetProductsByQuery(query) {
+
+    let jwt = sessionStorage.getItem('jwt');
+    
     return (fetch("https://distribuciones-nacionales-api.herokuapp.com/products/find/" + query, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + 
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjM4ODA4MjA4LCJleHAiOjE2NDE0MDAyMDh9.79yFVPQ8NvDVw792aCp8x2_DXdwVoM_VXLxwF9DpG68"
+                Authorization: "Bearer " + jwt
             }
         })
             .then(res => res.json())

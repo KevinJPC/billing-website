@@ -14,8 +14,8 @@ const initialState = {
 
 export const loginAsync = createAsyncThunk(
   'user/fetchLogin',
-  async () => {
-    const response = await fetchLogin();
+  async (credentials) => {
+    const response = await fetchLogin(credentials);
     console.log("response login", response)
     // The value we return becomes the `fulfilled` action payload
     return response;
@@ -24,8 +24,8 @@ export const loginAsync = createAsyncThunk(
 
 export const reLoginAsync = createAsyncThunk(
     'user/fetchReLogin',
-    async () => {
-      const response = await fetchReLogin();
+    async (credentials) => {
+      const response = await fetchReLogin(credentials);
       console.log("response login", response)
       // The value we return becomes the `fulfilled` action payload
       return response;

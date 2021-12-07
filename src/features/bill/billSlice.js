@@ -61,8 +61,13 @@ export const billSlice = createSlice({
       })
       .addCase(getbillAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        
-        state.value = action.payload;
+
+        if (action.payload.error) {
+          console.log("error", action.payload.error)
+        }else{
+          state.value = action.payload;
+          console.log("paylod", action.payload)
+        }
       });
   },
 });
@@ -74,7 +79,7 @@ export const { } = billSlice.actions;
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectBill = (state) => state.bill.value;
 
-export const selectStatus = (state) => state.bill.status;
+export const selectBillStatus = (state) => state.bill.status;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

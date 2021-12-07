@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    selectBill, selectStatus, getBillAsync
+    selectBill, selectBillStatus, getBillAsync
 } from '../bill/billSlice';
 export function Product() {
 
     const bills = useSelector(selectBill);
-    const status = useSelector(selectStatus);
+    const status = useSelector(selectBillStatus);
     const dispatch = useDispatch();
     const jwt = "a";
     useEffect(function () {    

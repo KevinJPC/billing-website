@@ -14,10 +14,10 @@ const initialState = {
   
   export const getPaymentMethodAsync = createAsyncThunk(
     'paymentMethods/fetchGet',
-    async (jwt) => {
+    async () => {
       console.log("test")
   
-      const response = await fetchGetPaymentMethods(jwt);
+      const response = await fetchGetPaymentMethods();
       console.log("response", response)
       // The value we return becomes the `fulfilled` action payload
       return response;
@@ -53,8 +53,13 @@ const initialState = {
         })
         .addCase(getPaymentMethodAsync.fulfilled, (state, action) => {
           state.status = 'idle';
-          console.log("paylod", action.payload)
-          state.value = action.payload;
+
+          if (action.payload.error) {
+            console.log("error", action.payload.error)
+          }else{
+            state.value = action.payload;
+            console.log("paylod", action.payload)
+          }
         });
     },
   });

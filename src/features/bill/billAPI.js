@@ -1,4 +1,6 @@
-export function billGet(bill) {
+export function billGet() {
+
+    let jwt = sessionStorage.getItem('jwt');
 
     return (fetch("https://distribuciones-nacionales-api.herokuapp.com/bills", {
             method: "GET",
@@ -14,6 +16,9 @@ export function billGet(bill) {
 }
 
 export function billRegister(bill) {
+
+    let jwt = sessionStorage.getItem('jwt');
+
     return (fetch("https://distribuciones-nacionales-api.herokuapp.com/bills", {
         method: 'POST',
         body: JSON.stringify(bill),
