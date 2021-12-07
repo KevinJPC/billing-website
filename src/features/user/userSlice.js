@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchGetProducts, fetchGetProductsByQuery } from './productAPI';
+import { fetchLogin, fetchReLogin } from './userAPI';
 
 const initialState = {
-  value: [],
+  value: {},
   status: 'idle',
 };
 
@@ -12,30 +12,28 @@ const initialState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 
-export const getProductsAsync = createAsyncThunk(
-  'product/fetchGetProducts',
+export const loginAsync = createAsyncThunk(
+  'user/fetchLogin',
   async () => {
-    const response = await fetchGetProducts();
-    console.log("response get products", response)
-    // The value we return becomes the `fulfilled` action payload
-    return response;
-
-
-  }
-);
-
-export const getProductsByQueryAsync = createAsyncThunk(
-  'product/fetchGetProductsByQuery',
-  async (query) => {
-    const response = await fetchGetProductsByQuery(query);
-    console.log("response get products by query", response)
+    const response = await fetchLogin();
+    console.log("response login", response)
     // The value we return becomes the `fulfilled` action payload
     return response;
   }
 );
 
-export const productSlice = createSlice({
-  name: 'product',
+export const reLoginAsync = createAsyncThunk(
+    'user/fetchReLogin',
+    async () => {
+      const response = await fetchReLogin();
+      console.log("response login", response)
+      // The value we return becomes the `fulfilled` action payload
+      return response;
+    }
+  );
+
+export const userSlice = createSlice({
+  name: 'user',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -59,50 +57,55 @@ export const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       ////////////////////////////////////////////////////////////////
-      //getProductsAsync
-      .addCase(getProductsAsync.pending, (state) => {
+      //loginAsync
+      .addCase(loginAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(getProductsAsync.fulfilled, (state, action) => {
+      .addCase(loginAsync.fulfilled, (state, action) => {
+
         state.status = 'idle';
-      
-        if (action.payload.error) {
-          console.log("error", action.payload.error)
+
+        if (action.payload.error){
+          console.log('rechazo')
         }else{
-          state.value = action.payload;
-          console.log("paylod", action.payload)
+            console.log("paylod", action.payload.user)
+            state.value = action.payload.user;
+            sessionStorage.setItem('jwt', action.payload.jwt);
+        }
+
+      })
+       ////////////////////////////////////////////////////////////////
+      //loginAsync
+      .addCase(reLoginAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(reLoginAsync.fulfilled, (state, action) => {
+
+        state.status = 'idle';
+
+        if (action.payload.error) {
+          console.log('rechazo')
+        }else{
+        state.value = action.payload;
+        let jwt = sessionStorage.getItem('jwt');
+        sessionStorage.setItem('jwt', jwt);
+        console.log("paylod", action.payload)
         }
         
       })
-      ///////////////////////////////////////////////////////////////
-      //getProductsByQueryAsync
-      .addCase(getProductsByQueryAsync.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(getProductsByQueryAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
-
-        if(action.payload.error){
-          console.log("error", action.payload.error)
-        }else{
-          console.log("paylod", action.payload)
-          state.value = action.payload;
-        }
-
-      });
   },
 });
 
-export const { } = productSlice.actions;
+export const { } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectProduct = (state) => state.product.value;
+export const selectUser = (state) => state.user.value;
 
-export const selectProductStatus = (state) => state.product.status;
+export const selectUserStatus = (state) => state.user.status;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 
-export default productSlice.reducer;
+export default userSlice.reducer;
