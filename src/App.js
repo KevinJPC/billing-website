@@ -10,6 +10,7 @@ import {
   Route,
   Link,
 } from "react-router-dom";
+import { Billing } from './features/components/Billing';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
     <Routes>
       <Route exact path="/" element={<Login/>}/>
       <Route exact path="/ConsultarProducto" element={<Product/>}/>
+      <Route exact path="/GestorFactura" element={<Billing/>}/>
     </Routes>
     </div>
   </Router>
