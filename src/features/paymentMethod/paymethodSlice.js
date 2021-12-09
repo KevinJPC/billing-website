@@ -18,7 +18,7 @@ const initialState = {
       console.log("test")
   
       const response = await fetchGetPaymentMethods();
-      console.log("response", response)
+      console.log("response payment method", response)
       // The value we return becomes the `fulfilled` action payload
       return response;
     }

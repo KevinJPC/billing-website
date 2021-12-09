@@ -79,13 +79,30 @@ export const billSlice = createSlice({
         }
       })
       
-      
       .addCase(updateStatusBillAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(updateStatusBillAsync, (state, action) => {
         state.status = 'idle';
-      });
+      })
+
+      .addCase(registerBillAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+        .addCase(registerBillAsync.rejected, (state) => {
+            state.status = 'idle';
+        })
+        .addCase(registerBillAsync.fulfilled, (state, action) => {
+            
+            state.status = 'idle';
+
+            if (action.payload.error) {
+              console.log("error", action.payload.error)
+            }else{
+              state.value = action.payload;
+              console.log("paylod", action.payload)
+            }
+      })
   },
 });
 
