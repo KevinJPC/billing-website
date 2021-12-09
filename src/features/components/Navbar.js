@@ -1,37 +1,63 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import React, { useState, useEffect, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    selectUser, selectUserStatus, logOut, selectUserConnected
+} from '../user/userSlice';
+
+import {
+    removeProducts
+} from '../product/productSlice';
 
 export function Navbar() {
 
+    const user = useSelector(selectUser);
+    const userStatus = useSelector(selectUserStatus);
+    const userConnected = useSelector(selectUserConnected);
+
+    const dispatch = useDispatch();
+
+    const handleLogOut = () => {
+        dispatch(removeProducts())
+        dispatch(logOut())
+    }
+
     return (
-        <div>
-            <nav className="navbar navbar-dark bg-dark navbar-expand-lg bg-light ">
+        <div className='mb-5'>
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Navbar</a>
-                    <button className="navbar-toggler" type="button">
+                    <a className="navbar-brand" href="#">Distribuciones nacionales</a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div className="collapse navbar-collapse" id="navbarNavDropdown">
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" href="#">Home</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Features</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Pricing</a>
-                            </li>
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button">
-                                    Dropdown link
-                                </a>
-                                <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="#">Action</a></li>
-                                    <li><a className="dropdown-item" href="#">Another action</a></li>
-                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
-                                </ul>
-                            </li>
+                    <div className="collapse navbar-collapse" id="navbarScroll">
+                        <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px;' }}>
+                            {userConnected !== true ?
+                                <li className="nav-item">
+                                    <Link to='/' className="nav-link active">Iniciar sesión</Link>
+                                </li>
+                                :
+                                <Fragment>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="#">Link</a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a className="nav-link disabled" href="#" tabIndex="-1" aria-disabled="true">Link</a>
+                                    </li>
+                                </Fragment>
+                            }
                         </ul>
+
+                        {user.id ?
+                            <div className="d-flex me-5">
+                                <a className="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><i className="fas fa-user me-2"></i>{user.username}</a>
+                                <ul className="dropdown-menu dropdown-menu-end me-5">
+                                    <li><a className="dropdown-item" href="#">Ver perfil</a></li>
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li><Link to='/' className="nav-link" onClick={() => handleLogOut()}>Cerrar sesión</Link></li>
+                                </ul>
+                            </div>
+                            : null}
                     </div>
                 </div>
             </nav>

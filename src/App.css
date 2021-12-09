@@ -26,6 +26,42 @@
   color: rgb(112, 76, 182);
 }
 
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #212529 #f8f9fa;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #f8f9fa;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #212529;
+    border-radius: 10px;
+    border: 3px solid #f8f9fa;
+  }
+
+  .product-item-list{
+    background-color: #f8f9fa;
+  }
+
+  .product-item-list:hover{
+    border-left: 5px solid rgb(175, 175, 175);
+  }
+
+  .product-item-list-select{
+    border-left: 5px solid rgb(0, 151, 76);
+  }
+
+
+
 @keyframes App-logo-float {
   0% {
     transform: translateY(0);

@@ -4,6 +4,8 @@ import { fetchLogin, fetchReLogin } from './userAPI';
 const initialState = {
   value: {},
   status: 'idle',
+  error: '',
+  connected: null
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -23,20 +25,28 @@ export const loginAsync = createAsyncThunk(
 );
 
 export const reLoginAsync = createAsyncThunk(
-    'user/fetchReLogin',
-    async (credentials) => {
-      const response = await fetchReLogin(credentials);
-      console.log("response login", response)
-      // The value we return becomes the `fulfilled` action payload
-      return response;
-    }
-  );
+  'user/fetchReLogin',
+  async (credentials) => {
+    const response = await fetchReLogin(credentials);
+    console.log("response login", response)
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
+    logOut: (state) => {
+      state.value = {};
+      state.status = 'idle';
+      state.error = '';
+      state.connected = false
+      sessionStorage.removeItem('jwt');
+      console.log('cerrando sesion')
+    }
     // increment: (state) => {
     //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
     //   // doesn't actually mutate the state because it uses the Immer library,
@@ -65,16 +75,19 @@ export const userSlice = createSlice({
 
         state.status = 'idle';
 
-        if (action.payload.error){
+        if (action.payload.error) {
           console.log('rechazo')
-        }else{
-            console.log("paylod", action.payload.user)
-            state.value = action.payload.user;
-            sessionStorage.setItem('jwt', action.payload.jwt);
+          state.connected = false
+          state.error = 'Usuario y/o contraseña incorrectos'
+        } else {
+          state.connected = true
+          console.log("paylod", action.payload.user)
+          state.value = action.payload.user;
+          sessionStorage.setItem('jwt', action.payload.jwt);
+          state.error = ''
         }
-
       })
-       ////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////
       //loginAsync
       .addCase(reLoginAsync.pending, (state) => {
         state.status = 'loading';
@@ -85,18 +98,20 @@ export const userSlice = createSlice({
 
         if (action.payload.error) {
           console.log('rechazo')
-        }else{
-        state.value = action.payload;
-        let jwt = sessionStorage.getItem('jwt');
-        sessionStorage.setItem('jwt', jwt);
-        console.log("paylod", action.payload)
+          state.connected = false
+        } else {
+          state.connected = true
+          state.value = action.payload;
+          let jwt = sessionStorage.getItem('jwt');
+          sessionStorage.setItem('jwt', jwt);
+          console.log("paylod", action.payload)
         }
-        
+
       })
   },
 });
 
-export const { } = userSlice.actions;
+export const { logOut } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -104,6 +119,11 @@ export const { } = userSlice.actions;
 export const selectUser = (state) => state.user.value;
 
 export const selectUserStatus = (state) => state.user.status;
+
+export const selectUserError = (state) => state.user.error;
+
+export const selectUserConnected = (state) => state.user.connected;
+
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

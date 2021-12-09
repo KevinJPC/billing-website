@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    selectUser, selectUserStatus, loginAsync, reLoginAsync
+    selectUser, selectUserStatus, selectUserError, loginAsync, reLoginAsync
 } from '../user/userSlice';
 import { Navigate } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ export function Login() {
 
     const user = useSelector(selectUser);
     const userStatus = useSelector(selectUserStatus);
+    const userError = useSelector(selectUserError);
     const dispatch = useDispatch();
 
     const [identifier, setIdentifier] = useState('')
@@ -18,7 +19,7 @@ export function Login() {
 
         console.log("re logeando")
 
-        if(sessionStorage.getItem('jwt') !== ''){
+        if(sessionStorage.getItem('jwt')){
             dispatch(reLoginAsync());
         }
 
@@ -34,9 +35,9 @@ export function Login() {
     return (
         <div>
             {user.id ? <Navigate to="/ConsultarProducto" /> :
-                <div className='container d-flex justify-content-center pt-5'>
+                <div className='container d-flex justify-content-center'>
                     <div className='col-5'>
-                        <h2 className='text-center'>
+                        <h2 className='text-center pb-4'>
                             Iniciar sesión
                         </h2>
                         <div className="mb-3">
@@ -48,7 +49,16 @@ export function Login() {
                             <input type="password" className="form-control" onChange={e => setPassword(e.target.value)} />
                         </div>
 
-                        <button type='button' className="btn btn-primary" onClick={() => handleLogin()}>Iniciar sesión</button>
+                        {
+                            userError === '' ? null :
+                        <div>
+                            <p className='text-danger'>
+                                {userError}
+                            </p>
+                        </div>
+                        }
+
+                        <button type='button' className="btn btn-success" onClick={() => handleLogin()}>Iniciar sesión</button>
                     </div>
 
                 </div>
