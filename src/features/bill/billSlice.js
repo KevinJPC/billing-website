@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { billGet, billRegister } from './billAPI';
+import { billGet, billRegister, updateStatusBill } from './billAPI';
 
 const initialState = {
   value: [],
@@ -17,19 +17,28 @@ export const getbillAsync = createAsyncThunk(
   async (jwt) => {
 
     const response = await billGet(jwt);
-    console.log("response", response)    
+    console.log("response", response)
     return response;
   }
 );
 
 export const registerBillAsync = createAsyncThunk(
-    'bill/billRegister',
-    async (bill) => {
+  'bill/billRegister',
+  async (bill) => {
 
-        const response = await billRegister(bill);
-        console.log("response", response);
-        return response;
-    }
+    const response = await billRegister(bill);
+    console.log("response", response);
+    return response;
+  }
+);
+
+export const updateStatusBillAsync = createAsyncThunk(
+  'bill/updateStatusBill',
+  async (bill) => {
+    const response = await updateStatusBill(bill);
+    console.log("response", response);
+    return response;
+  }
 );
 
 export const billSlice = createSlice({
@@ -64,10 +73,18 @@ export const billSlice = createSlice({
 
         if (action.payload.error) {
           console.log("error", action.payload.error)
-        }else{
+        } else {
           state.value = action.payload;
           console.log("paylod", action.payload)
         }
+      })
+      
+      
+      .addCase(updateStatusBillAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateStatusBillAsync, (state, action) => {
+        state.status = 'idle';
       });
   },
 });
@@ -85,3 +102,4 @@ export const selectBillStatus = (state) => state.bill.status;
 // Here's an example of conditionally dispatching actions based on current state.
 
 export default billSlice.reducer;
+
