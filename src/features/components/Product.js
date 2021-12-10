@@ -76,10 +76,10 @@ export function Product() {
             {userConnected === true ?
 
                     <div>
-                        <h2 className='text-center pb-4'>Consultar disponibilidad</h2>
+                        <h2 className='text-center pb-4'>Consultar producto</h2>
 
                         <div className='container d-flex justify-content-center'>
-                            <div className='col-5 '>
+                            <div className='col-7'>
 
                                 <div>
                                     <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => setQuery(e.target.value)} placeholder='Busque y seleccione un producto' />

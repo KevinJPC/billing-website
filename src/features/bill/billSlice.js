@@ -86,8 +86,19 @@ export const billSlice = createSlice({
       .addCase(updateStatusBillAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(updateStatusBillAsync, (state, action) => {
+      .addCase(updateStatusBillAsync.fulfilled, (state, action) => {
+
         state.status = 'idle';
+        console.log('action', action.payload)
+        for (let i = 0; i < state.value.length; i++) {
+
+          if (state.value[i].id == action.payload.id){
+
+            state.value[i] = action.payload
+
+          }
+        }
+
       })
 
       .addCase(registerBillAsync.pending, (state) => {

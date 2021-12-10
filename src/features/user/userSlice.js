@@ -75,16 +75,16 @@ export const userSlice = createSlice({
 
         state.status = 'idle';
 
-        if (action.payload.error) {
-          console.log('rechazo')
-          state.connected = false
-          state.error = 'Usuario y/o contraseña incorrectos'
-        } else {
+        if (action.payload.user) {
           state.connected = true
-          console.log("paylod", action.payload.user)
+          console.log("logeado", action.payload.user)
           state.value = action.payload.user;
           sessionStorage.setItem('jwt', action.payload.jwt);
           state.error = ''
+        } else {
+          console.log('rechazo')
+          state.connected = false
+          state.error = 'Usuario y/o contraseña incorrectos'
         }
       })
       ////////////////////////////////////////////////////////////////
