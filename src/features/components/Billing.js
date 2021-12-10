@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    selectBill, selectBillStatus, getBillAsync, registerBillAsync
+    selectBill, selectBillStatus, getBillAsync, registerBillAsync, setValues, selectBillRegistered
 } from '../bill/billSlice';
 import {
     selectProduct, selectProductStatus, getProductsAsync, getProductsByQueryAsync
@@ -13,6 +13,10 @@ import { selectUser, reLoginAsync, selectUserConnected } from '../user/userSlice
 
 export function Billing() {
 
+    const refCustomerName = useRef();
+    const refCustomerLastName = useRef();
+    const refPaymentMethod = useRef();
+
     const user = useSelector(selectUser);
     const paymentMethods = useSelector(selectPaymentMethod);
     const paymentMethodStatus = useSelector(selectPaymentMethodStatus);
@@ -21,6 +25,7 @@ export function Billing() {
     const products = useSelector(selectProduct);
     const productStatus = useSelector(selectProductStatus);
     const userConnected = useSelector(selectUserConnected);
+    const billRegistered = useSelector(selectBillRegistered);
 
     const dispatch = useDispatch();
 
@@ -31,10 +36,11 @@ export function Billing() {
     const [paymentMethod, setPaymentMethod] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
     const [customerProduct, setCustomerProduct] = useState([]);
+    const [Status, setStatus] = useState('0');
 
     const [customerCountry, setCustomerCountry] = useState('');
     const [customerAddress, setCustomerAddress] = useState('');
-    const [customerPostalCard, setCustomerPostalCard] = useState('');
+    const [customerPostalCode, setCustomerPostalCode] = useState('');
 
     const [query, setQuery] = useState('');
 
@@ -52,8 +58,26 @@ export function Billing() {
             dispatch(reLoginAsync());
         }
 
+        if (billRegistered == true) {
+            dispatch(setValues());
+            setCustomerName('');
+            setCustomerLastName('');
+            setCustomerIdentification('');
+            setCustomerCreditCard('');
+            setPaymentMethod('');
+            setCustomerPhone('');
+            setCustomerProduct([]);
+            setStatus('0');
+            setCustomerCountry('');
+            setCustomerAddress('');
+            setCustomerPostalCode('');
+            setQuery('');
+            cleanInputs();
 
-    }, [query]);
+        }
+
+
+    }, [query, billRegistered]);
 
     const handleGetProducts = () => {
         dispatch(getProductsAsync())
@@ -76,13 +100,13 @@ export function Billing() {
         setCustomerProduct(customerProductArray);
     }
 
-    const handleMinusProduct = id =>{
+    const handleMinusProduct = id => {
         let customerProductArray = customerProduct.slice();
 
         for (let i = 0; i < customerProductArray.length; i++) {
             if (customerProductArray[i].id === id) {
                 customerProductArray.splice(i, 1);
-            }   
+            }
         }
         setCustomerProduct(customerProductArray);
 
@@ -100,20 +124,18 @@ export function Billing() {
         setCustomerProduct(customerProductArray);
     }
 
-    const handleBilling = () => {
-        // dispatch(registerBillAsync({
-        //     customerName,
-        //     customerLastName,
-        //     customerIdentification,
-        //     customerCreditCard,
-        //     paymentMethod,
-        //     customerPhone,
-        //     product,
-        //     customerCountry,
-        //     customerAddress,
-        //     customerPostalCard
-        // }))
-        console.log(customerProduct);
+    const handleBilling = (bill) => {
+        dispatch(registerBillAsync(
+            bill
+        ))
+        console.log("factura ", bill);
+
+    }
+
+    const cleanInputs = () => {
+        refCustomerName.current.value = "";
+        refCustomerLastName.current.value = "";
+        refPaymentMethod.current.value = paymentMethods[0].id;
     }
 
     return (
@@ -206,14 +228,14 @@ export function Billing() {
                             <p className="text-black">
                                 Nombre de cliente
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerName(e.target.value)}></input>
+                            <input type="text" className="col-12 " ref={refCustomerName} onChange={e => setCustomerName(e.target.value)}></input>
 
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
                                 Apellidos
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerLastName(e.target.value)}></input>
+                            <input type="text" className="col-12 " ref={refCustomerLastName} onChange={e => setCustomerLastName(e.target.value)}></input>
 
                         </div>
                         <div className=" mb-3">
@@ -234,7 +256,7 @@ export function Billing() {
                             <p className="text-black">
                                 Método de pago
                             </p>
-                            <select className="form-select" aria-label="Default select example" onChange={e => setPaymentMethod(e.target.value)}>
+                            <select className="form-select" aria-label="Default select example" ref={refPaymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
                                 {paymentMethods.map((paymentMethod) => {
                                     return (
                                         <option key={paymentMethod.id} value={paymentMethod.id}>
@@ -269,16 +291,24 @@ export function Billing() {
                             <p className="text-black">
                                 Código Postal
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerPostalCard(e.target.value)}></input>
+                            <input type="text" className="col-12 " onChange={e => setCustomerPostalCode(e.target.value)}></input>
 
                         </div>
+                        <p className="text-black">
+                            Estado de factura
+                        </p>
                         <div className=" mb-3">
-                            <button type="button" className="btn btn-success col-12" onClick={() => handleBilling()}>
+                            <select className="form-select" aria-label="Default select example" onChange={e => setStatus(e.target.value)}>
+                                <option value="0">Por pagar</option>
+                                <option value="1">Pagado</option>
+                            </select>
+                        </div>
+                        <div className=" mb-3">
+                            <button type="button" className="btn btn-success col-12" onClick={() => handleBilling({
+                                customerName, customerLastName, customerIdentification, customerCreditCard,
+                                paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status
+                            })}>
                                 Guardar
-                            </button>
-
-                            <button type="button" className="btn btn-danger col-12" onClick={() => handleBilling()}>
-                                Guardar y facturar
                             </button>
                         </div>
                     </div>
