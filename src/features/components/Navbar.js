@@ -38,17 +38,21 @@ export function Navbar() {
                                 </li>
                                 :
                                 <Fragment>
+                                    
                                     <li className="nav-item">
-                                        <a className="nav-link" href="#">Link</a>
+                                        <Link to='/ConsultarFactura' className="nav-link active">Estado factura</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link disabled" href="#" tabIndex="-1" aria-disabled="true">Link</a>
+                                        <Link to='/GestorFactura' className="nav-link active">Facturación</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link to='/ConsultarProducto' className="nav-link active">Consultar producto</Link>
                                     </li>
                                 </Fragment>
                             }
                         </ul>
 
-                        {user.id ?
+                        {userConnected === true ?
                             <div className="d-flex me-5">
                                 <a className="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><i className="fas fa-user me-2"></i>{user.username}</a>
                                 <ul className="dropdown-menu dropdown-menu-end me-5">
