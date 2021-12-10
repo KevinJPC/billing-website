@@ -1,3 +1,6 @@
+//Cambuar token
+//Relogueo redirect login
+
 export function billGet() {
 
     let jwt = sessionStorage.getItem('jwt');

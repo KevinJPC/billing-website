@@ -9,14 +9,25 @@ import {
 import { getPaymentMethodAsync, selectPaymentMethod, selectPaymentMethodStatus }
     from '../paymentMethod/paymethodSlice';
 import { selectUser, reLoginAsync, selectUserConnected } from '../user/userSlice';
+import { Spinner } from './Spinner';
 
 
 export function Billing() {
 
+    //References
     const refCustomerName = useRef();
     const refCustomerLastName = useRef();
     const refPaymentMethod = useRef();
+    const refCustomerIdentification = useRef();
+    const refCustomerCreditCard = useRef();
+    const refCustomerPhone = useRef();
+    const refCustomerProduct = useRef();
+    const refCustomerCountry = useRef();
+    const refCustomerAddress = useRef();
+    const refCustomerPostalCode = useRef();
 
+
+    //Selectors
     const user = useSelector(selectUser);
     const paymentMethods = useSelector(selectPaymentMethod);
     const paymentMethodStatus = useSelector(selectPaymentMethodStatus);
@@ -27,8 +38,10 @@ export function Billing() {
     const userConnected = useSelector(selectUserConnected);
     const billRegistered = useSelector(selectBillRegistered);
 
+    //Dispatch
     const dispatch = useDispatch();
 
+    //States
     const [customerName, setCustomerName] = useState('');
     const [customerLastName, setCustomerLastName] = useState('');
     const [customerIdentification, setCustomerIdentification] = useState('');
@@ -37,12 +50,17 @@ export function Billing() {
     const [customerPhone, setCustomerPhone] = useState('');
     const [customerProduct, setCustomerProduct] = useState([]);
     const [Status, setStatus] = useState('0');
-
     const [customerCountry, setCustomerCountry] = useState('');
     const [customerAddress, setCustomerAddress] = useState('');
     const [customerPostalCode, setCustomerPostalCode] = useState('');
 
     const [query, setQuery] = useState('');
+    const [validationMessage, setValidationMessage] = useState('');
+    const [validationMessage2, setValidationMessage2] = useState('');
+    const [validationMessage3, setValidationMessage3] = useState('');
+    const [validationMessage4, setValidationMessage4] = useState('');
+    const [validationMessage5, setValidationMessage5] = useState('');
+
 
     useEffect(function () {
 
@@ -51,10 +69,10 @@ export function Billing() {
         } else {
             handleGetProductsByQuery(query);
         }
+
         dispatch(getPaymentMethodAsync());
 
         if (userConnected === null && sessionStorage.getItem('jwt')) {
-            console.log("re logeando")
             dispatch(reLoginAsync());
         }
 
@@ -125,10 +143,30 @@ export function Billing() {
     }
 
     const handleBilling = (bill) => {
-        dispatch(registerBillAsync(
-            bill
-        ))
-        console.log("factura ", bill);
+
+        if (customerName === '' || customerLastName === '' || customerIdentification === '' || customerCreditCard === '' || customerPhone === '' || customerCountry === '' ||
+            customerAddress === '' || customerPostalCode === '') {
+            setValidationMessage('Debe llenar todos los campos')
+            setTimeout(() => { setValidationMessage('') }, 5000);
+        } else if (customerProduct.length == 0) {
+            setValidationMessage('Debe agregar un producto')
+            setTimeout(() => { setValidationMessage('') }, 5000);
+        } else {
+
+            let customerProductArray = customerProduct.slice();
+
+            for (let i = 0; i < customerProductArray.length; i++) {
+                if (customerProductArray[i].amount == null) {
+                    setValidationMessage('Debe agregar la cantidad de cada producto')
+                    setTimeout(() => { setValidationMessage('') }, 5000);
+                } else {
+                    dispatch(registerBillAsync(
+                        bill
+                    ))
+                }
+            }
+
+        }
 
     }
 
@@ -136,10 +174,44 @@ export function Billing() {
         refCustomerName.current.value = "";
         refCustomerLastName.current.value = "";
         refPaymentMethod.current.value = paymentMethods[0].id;
+        refCustomerCreditCard.current.value = "";
+        refCustomerPhone.current.value = "";
+        refCustomerCountry.current.value = "";
+        refCustomerAddress.current.value = "";
+        refCustomerPostalCode.current.value = "";
+        refCustomerIdentification.current.value = "";
+    }
+
+    const justNumberTel = (e) => {
+        if (!Number(e) && e !== '') {
+            setValidationMessage2('Número de teléfono inválido')
+            setTimeout(() => { setValidationMessage2('') }, 5000);
+        }
+    }
+
+    const justNumberPostal = (e) => {
+        if (!Number(e) && e !== '') {
+            setValidationMessage3('Código postal inválido')
+            setTimeout(() => { setValidationMessage3('') }, 5000);
+        }
+    }
+
+    const justNumberID = (e) => {
+        if (!Number(e) && e !== '') {
+            setValidationMessage4('Cédula inválido')
+            setTimeout(() => { setValidationMessage4('') }, 5000);
+        }
+    }
+
+    const justNumberCreditCard = (e) => {
+        if (!Number(e) && e !== '') {
+            setValidationMessage5('Número de tarjeta inválido')
+            setTimeout(() => { setValidationMessage5('') }, 5000);
+        }
     }
 
     return (
-        <div>
+        <div className="col-7 container">
             {paymentMethods.length == 0 ? null :
                 <div className="container">
 
@@ -228,29 +300,33 @@ export function Billing() {
                             <p className="text-black">
                                 Nombre de cliente
                             </p>
-                            <input type="text" className="col-12 " ref={refCustomerName} onChange={e => setCustomerName(e.target.value)}></input>
+                            <input type="text" className="col-12 form-control" ref={refCustomerName} onChange={e => setCustomerName(e.target.value)}></input>
 
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
                                 Apellidos
                             </p>
-                            <input type="text" className="col-12 " ref={refCustomerLastName} onChange={e => setCustomerLastName(e.target.value)}></input>
+                            <input type="text" className="col-12 form-control" ref={refCustomerLastName} onChange={e => setCustomerLastName(e.target.value)}></input>
 
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
-                                ID
+                                Cédula
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerIdentification(e.target.value)}></input>
-
+                            <input type="text" className="col-12 form-control" ref={refCustomerIdentification} onKeyUp={e => justNumberID(e.target.value)} onChange={e => setCustomerIdentification(e.target.value)} maxLength="10"></input>
+                            <div className='text-danger mt-3' role='alert'>
+                                {validationMessage4 === '' ? null : validationMessage4}
+                            </div>
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
                                 Número de tarjeta de credito
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerCreditCard(e.target.value)}></input>
-
+                            <input type="text" className="col-12 form-control" ref={refCustomerCreditCard} onKeyUp={e => justNumberCreditCard(e.target.value)} onChange={e => setCustomerCreditCard(e.target.value)}></input>
+                            <div className='text-danger mt-3' role='alert'>
+                                {validationMessage5 === '' ? null : validationMessage5}
+                            </div>
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
@@ -270,46 +346,56 @@ export function Billing() {
                             <p className="text-black">
                                 Número de teléfono
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerPhone(e.target.value)}></input>
-
+                            <input type="tel" className="col-12 form-control" ref={refCustomerPhone} onKeyUp={e => justNumberTel(e.target.value)} onChange={e => setCustomerPhone(e.target.value)} maxLength="11"></input>
+                            <div className='text-danger mt-3' role='alert'>
+                                {validationMessage2 === '' ? null : validationMessage2}
+                            </div>
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
                                 País
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerCountry(e.target.value)}></input>
+                            <input type="text" className="col-12 form-control" ref={refCustomerCountry} onChange={e => setCustomerCountry(e.target.value)}></input>
 
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
                                 Dirección
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerAddress(e.target.value)}></input>
+                            <input type="text" className="col-12 form-control" ref={refCustomerAddress} onChange={e => setCustomerAddress(e.target.value)}></input>
 
                         </div>
                         <div className=" mb-3">
                             <p className="text-black">
                                 Código Postal
                             </p>
-                            <input type="text" className="col-12 " onChange={e => setCustomerPostalCode(e.target.value)}></input>
-
+                            <input type="text" className="col-12 form-control" ref={refCustomerPostalCode} onKeyUp={e => justNumberPostal(e.target.value)} onChange={e => setCustomerPostalCode(e.target.value)} maxLength="6"></input>
+                            <div className='text-danger mt-3' role='alert'>
+                                {validationMessage3 === '' ? null : validationMessage3}
+                            </div>
                         </div>
                         <p className="text-black">
                             Estado de factura
                         </p>
                         <div className=" mb-3">
-                            <select className="form-select" aria-label="Default select example" onChange={e => setStatus(e.target.value)}>
+                            <select className="form-select" aria-label="Default select example" onChange={e => setStatus(e.target.value)} >
                                 <option value="0">Por pagar</option>
                                 <option value="1">Pagado</option>
                             </select>
                         </div>
-                        <div className=" mb-3">
-                            <button type="button" className="btn btn-success col-12" onClick={() => handleBilling({
-                                customerName, customerLastName, customerIdentification, customerCreditCard,
-                                paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status
-                            })}>
-                                Guardar
-                            </button>
+                        <div className="d-flex">
+                            <div className=" mb-3 col-2 me-3">
+                                <button type="button" className="btn btn-success col-12" onClick={() => handleBilling({
+                                    customerName, customerLastName, customerIdentification, customerCreditCard,
+                                    paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status
+                                })}>
+                                    Guardar
+                                </button>
+                            </div>
+                            {status == "loading" ? <Spinner /> : null}
+                            <div className='text-danger mt-3' role='alert'>
+                                {validationMessage === '' ? null : validationMessage}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -317,5 +403,4 @@ export function Billing() {
         </div>
 
     )
-
 }

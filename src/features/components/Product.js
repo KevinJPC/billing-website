@@ -35,7 +35,6 @@ export function Product() {
         } else {
             handleGetProductsByQuery(query);
         }
-
         
         if (userConnected === null && sessionStorage.getItem('jwt')) {
             console.log("re logeando")
