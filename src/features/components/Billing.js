@@ -10,6 +10,8 @@ import { getPaymentMethodAsync, selectPaymentMethod, selectPaymentMethodStatus }
     from '../paymentMethod/paymethodSlice';
 import { selectUser, reLoginAsync, selectUserConnected } from '../user/userSlice';
 import { Spinner } from './Spinner';
+import { Navigate } from 'react-router-dom';
+
 
 
 export function Billing() {
@@ -35,6 +37,7 @@ export function Billing() {
     const status = useSelector(selectBillStatus);
     const products = useSelector(selectProduct);
     const productStatus = useSelector(selectProductStatus);
+
     const userConnected = useSelector(selectUserConnected);
     const billRegistered = useSelector(selectBillRegistered);
 
@@ -114,7 +117,7 @@ export function Billing() {
 
         }
         let customerProductArray = customerProduct.slice();
-        customerProductArray.push({ id, price, name });
+        customerProductArray.push({ id, price, name, "amount": 0 });
         setCustomerProduct(customerProductArray);
     }
 
@@ -210,195 +213,242 @@ export function Billing() {
         }
     }
 
+    const handleGetTotalPrice = () => {
+        let total = 0;
+        if (customerProduct.length > 0) {
+
+            for (let i = 0; i < customerProduct.length; i++) {
+                total += customerProduct[i].price * customerProduct[i].amount;
+            }
+
+            return total;
+        }
+
+    }
+
+    const handleGetTotalAmount = () => {
+        let total = 0;
+        if (customerProduct.length > 0) {
+
+            for (let i = 0; i < customerProduct.length; i++) {
+                total += Number(customerProduct[i].amount);
+            }
+
+            return total;
+        }
+
+    }
+
+
+
     return (
-        <div className="col-7 container">
-            {paymentMethods.length == 0 ? null :
-                <div className="container">
+        <div>
+            {userConnected === true ?
 
-                    <div>
-                        <h3 className="text-center">
-                            Facturación
-                        </h3>
-                    </div>
-                    <div className="container py-3 mt-4 justify-content-center">
-                        <div className=" mb-3">
+                <div className="col-7 container">
+                    {paymentMethods.length == 0 ? null :
+                        <div className="container">
+
                             <div>
-                                <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => setQuery(e.target.value)} placeholder='Busque y agregue el o los productos' />
+                                <h3 className="text-center">
+                                    Facturación
+                                </h3>
                             </div>
+                            <div className="container py-3 mt-4 justify-content-center">
+                                <div className=" mb-3">
+                                    <div>
+                                        <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => setQuery(e.target.value)} placeholder='Busque y agregue el o los productos' />
+                                    </div>
 
-                            <div className='overflow-auto' style={{ height: "172px" }}>
-                                {
-                                    products.length === 0 ?
-                                        <div className=" text-center alert alert-danger col" role="alert">
-                                            Sin resultados de busqueda
-                                        </div>
-                                        :
-                                        products.map(function (product, index) {
-                                            return (
-                                                <div className='p-2 border-bottom product-item-list d-flex' key={index}>
-                                                    <p>
-                                                        <span className="fw-bold"> {product.id + ' - '} </span>
-                                                        <span className="fw-bold"></span> {product.name + ': '}
-                                                        <span className="fw-bold"></span> {product.description}
-                                                    </p>
-                                                    <button type='button' className="btn btn-success me-2 ms-auto" onClick={() => handleAddProduct(product.id, product.price, product.name)} ><i className="fas fa-plus"></i></button>
+                                    <div className='overflow-auto' style={{ height: "172px" }}>
+                                        {
+                                            products.length === 0 ?
+                                                <div className=" text-center alert alert-danger col" role="alert">
+                                                    Sin resultados de busqueda
                                                 </div>
-                                            );
-                                        })
-                                }
-                            </div>
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Productos añadidos
-                            </p>
+                                                :
+                                                products.map(function (product, index) {
+                                                    return (
+                                                        <div className='p-2 border-bottom product-item-list d-flex' key={index}>
+                                                            <p>
+                                                                <span className="fw-bold"> {product.id + ' - '} </span>
+                                                                <span className="fw-bold"></span> {product.name + ': '}
+                                                                <span className="fw-bold"></span> {product.description}
+                                                            </p>
+                                                            <button type='button' className="btn btn-success me-2 ms-auto" onClick={() => handleAddProduct(product.id, product.price, product.name)} ><i className="fas fa-plus"></i></button>
+                                                        </div>
+                                                    );
+                                                })
+                                        }
+                                    </div>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Productos añadidos
+                                    </p>
 
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Cantidad</th>
-                                        <th scope="col">Precio</th>
-                                        <th scope="col"> </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        customerProduct.length == 0 ?
+                                    <table className="table">
+                                        <thead>
                                             <tr>
-                                                <td colSpan="5">
-                                                    <div className=" text-center alert alert-danger col" role="alert">
-                                                        No hay productos añadidos
-                                                    </div>
-                                                </td>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad</th>
+                                                <th scope="col">Precio</th>
+                                                <th scope="col"> </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                customerProduct.length == 0 ?
+                                                    <tr>
+                                                        <td colSpan="5">
+                                                            <div className=" text-center alert alert-danger col" role="alert">
+                                                                No hay productos añadidos
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    :
+                                                    customerProduct.map(function (product, index) {
+                                                        return (
+                                                            <tr key={index}>
+                                                                <th>
+                                                                    <input type="text" className="form-control" value={product.name} disabled />
+                                                                </th>
+                                                                <th>
+                                                                    <input type="number" className="form-control" onChange={e => handleAddProductAmount(e.target.value, product.id)} />
+                                                                </th>
+                                                                <th>
+                                                                    <input type="text" className="form-control" value={product.price + ' CRC'} disabled />
+                                                                </th>
+                                                                <th>
+                                                                    <button type='button' className="btn btn-danger " onClick={() => handleMinusProduct(product.id)} ><i className="fas fa-minus"></i></button>
+                                                                </th>
+                                                            </tr>
+                                                        );
+                                                    })
+                                            }
+                                            <tr>
+                                                <th>
+                                                    Total
+                                                </th>
+                                                <th>
+                                                    {handleGetTotalAmount()}
+                                                </th>
+                                                <th>
+                                                    {handleGetTotalPrice()} CRC
+                                                </th>
                                             </tr>
 
-                                            :
-                                            customerProduct.map(function (product, index) {
-                                                return (
-                                                    <tr key={index}>
-                                                        <th>
-                                                            <input type="text" className="form-control" value={product.name} disabled />
-                                                        </th>
-                                                        <th>
-                                                            <input type="number" className="form-control" onChange={e => handleAddProductAmount(e.target.value, product.id)} />
-                                                        </th>
-                                                        <th>
-                                                            <input type="text" className="form-control" value={product.price + ' CRC'} disabled />
-                                                        </th>
-                                                        <th>
-                                                            <button type='button' className="btn btn-danger " onClick={() => handleMinusProduct(product.id)} ><i className="fas fa-minus"></i></button>
-                                                        </th>
-                                                    </tr>
-                                                );
-                                            })
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Nombre de cliente
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerName} onChange={e => setCustomerName(e.target.value)}></input>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Nombre de cliente
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerName} onChange={e => setCustomerName(e.target.value)}></input>
 
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Apellidos
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerLastName} onChange={e => setCustomerLastName(e.target.value)}></input>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Apellidos
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerLastName} onChange={e => setCustomerLastName(e.target.value)}></input>
 
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Cédula
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerIdentification} onKeyUp={e => justNumberID(e.target.value)} onChange={e => setCustomerIdentification(e.target.value)} maxLength="10"></input>
-                            <div className='text-danger mt-3' role='alert'>
-                                {validationMessage4 === '' ? null : validationMessage4}
-                            </div>
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Número de tarjeta de credito
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerCreditCard} onKeyUp={e => justNumberCreditCard(e.target.value)} onChange={e => setCustomerCreditCard(e.target.value)}></input>
-                            <div className='text-danger mt-3' role='alert'>
-                                {validationMessage5 === '' ? null : validationMessage5}
-                            </div>
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Método de pago
-                            </p>
-                            <select className="form-select" aria-label="Default select example" ref={refPaymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
-                                {paymentMethods.map((paymentMethod) => {
-                                    return (
-                                        <option key={paymentMethod.id} value={paymentMethod.id}>
-                                            {paymentMethod.name}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Número de teléfono
-                            </p>
-                            <input type="tel" className="col-12 form-control" ref={refCustomerPhone} onKeyUp={e => justNumberTel(e.target.value)} onChange={e => setCustomerPhone(e.target.value)} maxLength="11"></input>
-                            <div className='text-danger mt-3' role='alert'>
-                                {validationMessage2 === '' ? null : validationMessage2}
-                            </div>
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                País
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerCountry} onChange={e => setCustomerCountry(e.target.value)}></input>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Cédula
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerIdentification} onKeyUp={e => justNumberID(e.target.value)} onChange={e => setCustomerIdentification(e.target.value)} maxLength="10"></input>
+                                    <div className='text-danger mt-3' role='alert'>
+                                        {validationMessage4 === '' ? null : validationMessage4}
+                                    </div>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Número de tarjeta de credito
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerCreditCard} onKeyUp={e => justNumberCreditCard(e.target.value)} onChange={e => setCustomerCreditCard(e.target.value)}></input>
+                                    <div className='text-danger mt-3' role='alert'>
+                                        {validationMessage5 === '' ? null : validationMessage5}
+                                    </div>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Método de pago
+                                    </p>
+                                    <select className="form-select" aria-label="Default select example" ref={refPaymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+                                        {paymentMethods.map((paymentMethod) => {
+                                            return (
+                                                <option key={paymentMethod.id} value={paymentMethod.id}>
+                                                    {paymentMethod.name}
+                                                </option>
+                                            );
+                                        })}
+                                    </select>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Número de teléfono
+                                    </p>
+                                    <input type="tel" className="col-12 form-control" ref={refCustomerPhone} onKeyUp={e => justNumberTel(e.target.value)} onChange={e => setCustomerPhone(e.target.value)} maxLength="11"></input>
+                                    <div className='text-danger mt-3' role='alert'>
+                                        {validationMessage2 === '' ? null : validationMessage2}
+                                    </div>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        País
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerCountry} onChange={e => setCustomerCountry(e.target.value)}></input>
 
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Dirección
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerAddress} onChange={e => setCustomerAddress(e.target.value)}></input>
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Dirección
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerAddress} onChange={e => setCustomerAddress(e.target.value)}></input>
 
-                        </div>
-                        <div className=" mb-3">
-                            <p className="text-black">
-                                Código Postal
-                            </p>
-                            <input type="text" className="col-12 form-control" ref={refCustomerPostalCode} onKeyUp={e => justNumberPostal(e.target.value)} onChange={e => setCustomerPostalCode(e.target.value)} maxLength="6"></input>
-                            <div className='text-danger mt-3' role='alert'>
-                                {validationMessage3 === '' ? null : validationMessage3}
+                                </div>
+                                <div className=" mb-3">
+                                    <p className="text-black">
+                                        Código Postal
+                                    </p>
+                                    <input type="text" className="col-12 form-control" ref={refCustomerPostalCode} onKeyUp={e => justNumberPostal(e.target.value)} onChange={e => setCustomerPostalCode(e.target.value)} maxLength="6"></input>
+                                    <div className='text-danger mt-3' role='alert'>
+                                        {validationMessage3 === '' ? null : validationMessage3}
+                                    </div>
+                                </div>
+                                <p className="text-black">
+                                    Estado de factura
+                                </p>
+                                <div className=" mb-3">
+                                    <select className="form-select" aria-label="Default select example" onChange={e => setStatus(e.target.value)} >
+                                        <option value="0">Por pagar</option>
+                                        <option value="1">Pagado</option>
+                                    </select>
+                                </div>
+                                <div className="d-flex">
+                                    <div className=" mb-3 col-2 me-3">
+                                        <button type="button" className="btn btn-success col-12" onClick={() => handleBilling({
+                                            customerName, customerLastName, customerIdentification, customerCreditCard,
+                                            paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status
+                                        })}>
+                                            Guardar
+                                        </button>
+                                    </div>
+                                    {status == "loading" ? <Spinner /> : null}
+                                    <div className='text-danger mt-3' role='alert'>
+                                        {validationMessage === '' ? null : validationMessage}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <p className="text-black">
-                            Estado de factura
-                        </p>
-                        <div className=" mb-3">
-                            <select className="form-select" aria-label="Default select example" onChange={e => setStatus(e.target.value)} >
-                                <option value="0">Por pagar</option>
-                                <option value="1">Pagado</option>
-                            </select>
-                        </div>
-                        <div className="d-flex">
-                            <div className=" mb-3 col-2 me-3">
-                                <button type="button" className="btn btn-success col-12" onClick={() => handleBilling({
-                                    customerName, customerLastName, customerIdentification, customerCreditCard,
-                                    paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status
-                                })}>
-                                    Guardar
-                                </button>
-                            </div>
-                            {status == "loading" ? <Spinner /> : null}
-                            <div className='text-danger mt-3' role='alert'>
-                                {validationMessage === '' ? null : validationMessage}
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
+                :
+                <Navigate to="/" />
             }
         </div>
 

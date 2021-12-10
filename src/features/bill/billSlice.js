@@ -115,7 +115,7 @@ export const billSlice = createSlice({
               console.log("error", action.payload.error)
               state.registered = false;
             }else{
-              state.value = action.payload;
+              // state.value = action.payload;
               console.log("paylod", action.payload)
               state.registered = true;
             }
