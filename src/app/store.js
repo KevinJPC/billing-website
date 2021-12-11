@@ -11,6 +11,6 @@ export const store = configureStore({
     product: productReducer,
     user: userReducer,
     paymentMethod: paymentMethodReducer,
-    bill: billReducer,
+    bill: billReducer
   },
 });

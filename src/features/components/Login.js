@@ -8,7 +8,7 @@ import { Spinner } from './Spinner';
 
 
 export function Login() {
-//Validar campos vacios
+    //Validar campos vacios
     const user = useSelector(selectUser);
     const userStatus = useSelector(selectUserStatus);
     const userError = useSelector(selectUserError);
@@ -17,9 +17,9 @@ export function Login() {
     const [identifier, setIdentifier] = useState('')
     const [password, setPassword] = useState('')
 
-    useEffect(function () {
+    const [validationMessage, setValidationMessage] = useState('')
 
-        console.log("re logeando")
+    useEffect(function () {
 
         if (sessionStorage.getItem('jwt')) {
             dispatch(reLoginAsync());
@@ -28,9 +28,11 @@ export function Login() {
     }, []);
 
     const handleLogin = () => {
-        console.log("iniciando sesion")
-        console.log(identifier)
-        console.log(password)
+        if (identifier === '' || password === '') {
+            setValidationMessage('Debe completar todos los campos');
+            setTimeout(() => { setValidationMessage('') }, 5000);
+            return
+        }
         dispatch(loginAsync({ identifier, password }))
     }
 
@@ -60,9 +62,15 @@ export function Login() {
                                 </div>
                         }
 
+                        {<div>
+                            <p className='text-danger mt-3'>
+                                {validationMessage}
+                            </p>
+                        </div>}
+
                         <div className='d-flex align-items-center mt-3'>
                             <button type='button' className="btn btn-success" onClick={() => handleLogin()}>Iniciar sesión</button>
-                            
+
                             {
                                 userStatus === 'loading' ? <div className='ms-3'><Spinner /></div> : null
                             }

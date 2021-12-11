@@ -24,7 +24,6 @@ export function BillState() {
         handleGetBills();
 
         if (userConnected === null && sessionStorage.getItem('jwt')) {
-            console.log("re logeando")
             dispatch(reLoginAsync());
         }
 
@@ -39,7 +38,6 @@ export function BillState() {
         let billObj = { ...bill };
         billObj.Status = 1;
         dispatch(updateStatusBillAsync(billObj))
-        // console.log(billObj);
     }
 
     const handleGetDate = (dateStr) => {
@@ -77,8 +75,6 @@ export function BillState() {
                                 bills.map(function (bill, index) {
                                     return (
                                         <tr key={index}>
-                                            {/* <ul className="list-group">
-                                                <li className="list-group-item list-group-item-dark d-flex mb-3"> */}
                                             <th>
                                                 <p className="fw-normal"> {bill.id}</p>
                                             </th>
@@ -99,11 +95,8 @@ export function BillState() {
                                                 {bill.Status == 0 ?
                                                     <button className="btn btn-danger ms-auto" type="button" onClick={() => handleUpdateStatusBill(bill)}> Pagar </button>
                                                     : null
-                                                    // <button className="btn btn-success ms-auto" type="button" disabled> Pagar </button>
                                                 }
                                             </th>
-                                            {/* </li>
-                                            </ul> */}
                                         </tr>);
 
                                 })
@@ -112,7 +105,6 @@ export function BillState() {
                 </table>
             </div>
             :
-
             <Navigate to="/" />
 
     }

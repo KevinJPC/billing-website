@@ -29,7 +29,6 @@ export function Product() {
 
     useEffect(function () {
 
-        console.log("query", query)
         if (query === '') {
             handleGetProducts();
         } else {
@@ -37,7 +36,6 @@ export function Product() {
         }
         
         if (userConnected === null && sessionStorage.getItem('jwt')) {
-            console.log("re logeando")
             dispatch(reLoginAsync());
         }
 
@@ -52,7 +50,6 @@ export function Product() {
     }
 
     const handleCheckAvailability = () => {
-        console.log('consultando')
         if (id === '' || amount === '') {
             setValidationMessage('Debe seleccionar un producto y digitar la cantidad solicitada')
         } else {
@@ -81,7 +78,16 @@ export function Product() {
                             <div className='col-7'>
 
                                 <div>
-                                    <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => setQuery(e.target.value)} placeholder='Busque y seleccione un producto' />
+                                    <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => {
+                                        let pattern = new RegExp("^[a-zA-Z0-9_]*$");
+                                        if(pattern.test(e.target.value)){
+                                            setQuery(e.target.value)
+                                        }else{
+                                            e.target.value = query;
+                                        }
+                                        }
+                                        
+                                        } placeholder='Busque y seleccione un producto' />
                                 </div>
 
                                 <div className='overflow-auto' style={{ height: "172px" }}>

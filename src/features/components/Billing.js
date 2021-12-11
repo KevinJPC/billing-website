@@ -79,6 +79,10 @@ export function Billing() {
             dispatch(reLoginAsync());
         }
 
+        if (paymentMethods.length > 0) {
+            setPaymentMethod(paymentMethods[0].id);
+        }
+
         if (billRegistered == true) {
             dispatch(setValues());
             setCustomerName('');
@@ -147,7 +151,7 @@ export function Billing() {
 
     const handleBilling = (bill) => {
 
-        if (customerName === '' || customerLastName === '' || customerIdentification === '' || customerCreditCard === '' || customerPhone === '' || customerCountry === '' ||
+        if (customerName === '' || customerLastName === '' || customerIdentification === '' || (paymentMethod == 3 && customerCreditCard === '') || customerPhone === '' || customerCountry === '' ||
             customerAddress === '' || customerPostalCode === '') {
             setValidationMessage('Debe llenar todos los campos')
             setTimeout(() => { setValidationMessage('') }, 5000);
@@ -159,13 +163,13 @@ export function Billing() {
             let customerProductArray = customerProduct.slice();
 
             for (let i = 0; i < customerProductArray.length; i++) {
-                if (customerProductArray[i].amount == null) {
+                if (customerProductArray[i].amount <= 0) {
                     setValidationMessage('Debe agregar la cantidad de cada producto')
                     setTimeout(() => { setValidationMessage('') }, 5000);
+                    return;
                 } else {
-                    dispatch(registerBillAsync(
-                        bill
-                    ))
+                    dispatch(registerBillAsync(bill))
+                    return;
                 }
             }
 
@@ -177,7 +181,9 @@ export function Billing() {
         refCustomerName.current.value = "";
         refCustomerLastName.current.value = "";
         refPaymentMethod.current.value = paymentMethods[0].id;
-        refCustomerCreditCard.current.value = "";
+        if (paymentMethod == 3) {
+            refCustomerCreditCard.current.value = "";
+        }
         refCustomerPhone.current.value = "";
         refCustomerCountry.current.value = "";
         refCustomerAddress.current.value = "";
@@ -220,10 +226,8 @@ export function Billing() {
             for (let i = 0; i < customerProduct.length; i++) {
                 total += customerProduct[i].price * customerProduct[i].amount;
             }
-
-            return total;
         }
-
+        return total;
     }
 
     const handleGetTotalAmount = () => {
@@ -233,12 +237,10 @@ export function Billing() {
             for (let i = 0; i < customerProduct.length; i++) {
                 total += Number(customerProduct[i].amount);
             }
-
-            return total;
         }
+        return total;
 
     }
-
 
 
     return (
@@ -257,7 +259,16 @@ export function Billing() {
                             <div className="container py-3 mt-4 justify-content-center">
                                 <div className=" mb-3">
                                     <div>
-                                        <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => setQuery(e.target.value)} placeholder='Busque y agregue el o los productos' />
+                                        <input className='form-control' style={{ width: "100%" }} type="text" onChange={e => {
+
+                                            let pattern = new RegExp("^[a-zA-Z0-9_]*$");
+                                            if (pattern.test(e.target.value)) {
+                                                setQuery(e.target.value)
+                                            } else {
+                                                e.target.value = query;
+                                            }
+                                        }
+                                        } placeholder='Busque y agregue el o los productos' />
                                     </div>
 
                                     <div className='overflow-auto' style={{ height: "172px" }}>
@@ -315,7 +326,7 @@ export function Billing() {
                                                                     <input type="text" className="form-control" value={product.name} disabled />
                                                                 </th>
                                                                 <th>
-                                                                    <input type="number" className="form-control" onChange={e => handleAddProductAmount(e.target.value, product.id)} />
+                                                                    <input type="number" className="form-control" onChange={e => handleAddProductAmount(e.target.value, product.id)} value={product.amount} />
                                                                 </th>
                                                                 <th>
                                                                     <input type="text" className="form-control" value={product.price + ' CRC'} disabled />
@@ -337,6 +348,8 @@ export function Billing() {
                                                 <th>
                                                     {handleGetTotalPrice()} CRC
                                                 </th>
+                                                <th> </th>
+
                                             </tr>
 
                                         </tbody>
@@ -367,15 +380,6 @@ export function Billing() {
                                 </div>
                                 <div className=" mb-3">
                                     <p className="text-black">
-                                        Número de tarjeta de credito
-                                    </p>
-                                    <input type="text" className="col-12 form-control" ref={refCustomerCreditCard} onKeyUp={e => justNumberCreditCard(e.target.value)} onChange={e => setCustomerCreditCard(e.target.value)}></input>
-                                    <div className='text-danger mt-3' role='alert'>
-                                        {validationMessage5 === '' ? null : validationMessage5}
-                                    </div>
-                                </div>
-                                <div className=" mb-3">
-                                    <p className="text-black">
                                         Método de pago
                                     </p>
                                     <select className="form-select" aria-label="Default select example" ref={refPaymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
@@ -388,6 +392,21 @@ export function Billing() {
                                         })}
                                     </select>
                                 </div>
+
+                                {paymentMethod == 3 ?
+                                    <div className=" mb-3">
+                                        <p className="text-black">
+                                            Número de tarjeta de credito
+                                        </p>
+                                        <input type="text" className="col-12 form-control" ref={refCustomerCreditCard} onKeyUp={e => justNumberCreditCard(e.target.value)} onChange={e => setCustomerCreditCard(e.target.value)}></input>
+                                        <div className='text-danger mt-3' role='alert'>
+                                            {validationMessage5 === '' ? null : validationMessage5}
+                                        </div>
+                                    </div>
+                                    :
+                                    null
+                                }
+
                                 <div className=" mb-3">
                                     <p className="text-black">
                                         Número de teléfono
@@ -433,7 +452,7 @@ export function Billing() {
                                     <div className=" mb-3 col-2 me-3">
                                         <button type="button" className="btn btn-success col-12" onClick={() => handleBilling({
                                             customerName, customerLastName, customerIdentification, customerCreditCard,
-                                            paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status
+                                            paymentMethod, customerPhone, "products": customerProduct, customerCountry, customerAddress, customerPostalCode, Status, "user": { "id": user.id }
                                         })}>
                                             Guardar
                                         </button>
