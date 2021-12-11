@@ -38,7 +38,7 @@ export function Login() {
 
     return (
         <div>
-            {user.id ? <Navigate to="/ConsultarFactura" /> :
+            {user.id ? <Navigate to="/consultar-factura" /> :
                 <div className='container d-flex justify-content-center'>
                     <div className='col-5'>
                         <h2 className='text-center pb-4'>

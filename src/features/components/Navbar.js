@@ -40,13 +40,13 @@ export function Navbar() {
                                 <Fragment>
                                     
                                     <li className="nav-item">
-                                        <Link to='/ConsultarFactura' className="nav-link active">Estado factura</Link>
+                                        <Link to='/consultar-factura' className="nav-link active">Estado factura</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link to='/GestorFactura' className="nav-link active">Facturación</Link>
+                                        <Link to='/facturacion' className="nav-link active">Facturación</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link to='/ConsultarProducto' className="nav-link active">Consultar producto</Link>
+                                        <Link to='/consultar-producto' className="nav-link active">Consultar producto</Link>
                                     </li>
                                 </Fragment>
                             }

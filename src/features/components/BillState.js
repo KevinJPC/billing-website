@@ -49,7 +49,7 @@ export function BillState() {
     return (
         <div>
             {userConnected === true ?
-            <div className="container col-8">
+            <div className="container col-7">
                 <table className="table table-hover table-fixed">
                     <thead>
                         <tr>

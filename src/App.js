@@ -20,9 +20,9 @@ function App() {
       <Navbar/>
     <Routes>
       <Route exact path="/" element={<Login/>}/>
-      <Route exact path="/ConsultarProducto" element={<Product/>}/>
-      <Route exact path="/ConsultarFactura" element={<BillState/>}/>
-      <Route exact path="/GestorFactura" element={<Billing/>}/>
+      <Route exact path="/consultar-producto" element={<Product/>}/>
+      <Route exact path="/consultar-factura" element={<BillState/>}/>
+      <Route exact path="/facturacion" element={<Billing/>}/>
     </Routes>
     </div>
   </Router>
