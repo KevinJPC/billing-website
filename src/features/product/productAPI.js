@@ -1,3 +1,5 @@
+
+//fetch to obtain all registered products, for this it obtains and sends the user's jwt
 export function fetchGetProducts() {
 
     let jwt = sessionStorage.getItem('jwt');
@@ -14,6 +16,7 @@ export function fetchGetProducts() {
     )
 }
 
+//fetch to filter the registered products, for this it obtains and sends the user's jwt and the query
 export function fetchGetProductsByQuery(query) {
 
     let jwt = sessionStorage.getItem('jwt');

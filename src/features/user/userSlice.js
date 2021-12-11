@@ -8,6 +8,7 @@ const initialState = {
   connected: null
 };
 
+//asynchronous functions to log in and log in again, call the respective fetches
 export const loginAsync = createAsyncThunk(
   'user/fetchLogin',
   async (credentials) => {
@@ -28,6 +29,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    //function to log out, return to the initial state and remove the jwt from the session storage 
     logOut: (state) => {
       state.value = {};
       state.status = 'idle';
@@ -38,7 +40,8 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      ////////////////////////////////////////////////////////////////
+    //respective functions depending on the state of the asynchronous function 
+      
       //loginAsync
       .addCase(loginAsync.pending, (state) => {
         state.status = 'loading';
@@ -57,8 +60,8 @@ export const userSlice = createSlice({
           state.error = 'Usuario y/o contraseña incorrectos'
         }
       })
-      ////////////////////////////////////////////////////////////////
-      //loginAsync
+      
+      //ReloginAsync
       .addCase(reLoginAsync.pending, (state) => {
         state.status = 'loading';
       })

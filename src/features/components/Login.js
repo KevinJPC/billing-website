@@ -8,25 +8,29 @@ import { Spinner } from './Spinner';
 
 
 export function Login() {
-    //Validar campos vacios
+    //selector
     const user = useSelector(selectUser);
     const userStatus = useSelector(selectUserStatus);
     const userError = useSelector(selectUserError);
+
+    //dispatch
     const dispatch = useDispatch();
 
+    //states
     const [identifier, setIdentifier] = useState('')
     const [password, setPassword] = useState('')
 
     const [validationMessage, setValidationMessage] = useState('')
 
     useEffect(function () {
-
+        //will re-login if you has jwt and it is valid
         if (sessionStorage.getItem('jwt')) {
             dispatch(reLoginAsync());
         }
 
     }, []);
 
+    //function handler to validate fields and call loginAsync
     const handleLogin = () => {
         if (identifier === '' || password === '') {
             setValidationMessage('Debe completar todos los campos');

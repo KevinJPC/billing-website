@@ -10,13 +10,15 @@ import {
 } from '../product/productSlice';
 
 export function Navbar() {
-
+    
+    //selector
     const user = useSelector(selectUser);
     const userStatus = useSelector(selectUserStatus);
     const userConnected = useSelector(selectUserConnected);
 
     const dispatch = useDispatch();
 
+    // logout function handler
     const handleLogOut = () => {
         dispatch(removeProducts())
         dispatch(logOut())

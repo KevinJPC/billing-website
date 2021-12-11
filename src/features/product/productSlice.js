@@ -6,6 +6,7 @@ const initialState = {
   status: 'idle',
 };
 
+//asynchronous functions to get products and filter them
 export const getProductsAsync = createAsyncThunk(
   'product/fetchGetProducts',
   async () => {
@@ -36,7 +37,8 @@ export const productSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      ////////////////////////////////////////////////////////////////
+      //respective functions depending on the state of the asynchronous function 
+
       //getProductsAsync
       .addCase(getProductsAsync.pending, (state) => {
         state.status = 'loading';
@@ -50,7 +52,7 @@ export const productSlice = createSlice({
         }
         
       })
-      ///////////////////////////////////////////////////////////////
+      
       //getProductsByQueryAsync
       .addCase(getProductsByQueryAsync.pending, (state) => {
         state.status = 'loading';

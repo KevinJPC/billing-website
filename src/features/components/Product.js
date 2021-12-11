@@ -10,6 +10,7 @@ import { Navigate } from 'react-router-dom';
 
 export function Product() {
 
+    //selector
     const products = useSelector(selectProduct);
     const productStatus = useSelector(selectProductStatus);
 
@@ -17,8 +18,10 @@ export function Product() {
     const userStatus = useSelector(selectUserStatus);
     const userConnected = useSelector(selectUserConnected);
 
+    //dispatch
     const dispatch = useDispatch();
 
+    //states
     const [id, setId] = useState('');
     const [amount, setAmount] = useState('');
     const [query, setQuery] = useState('');
@@ -27,28 +30,33 @@ export function Product() {
 
     const [validationMessage, setValidationMessage] = useState('');
 
+    //this useeffect runs when the query state changes
     useEffect(function () {
 
+        //get all products or filter them if user writes any query
         if (query === '') {
             handleGetProducts();
         } else {
             handleGetProductsByQuery(query);
         }
-
+        //will log in again if user has jwt and it is valid on page reload
         if (userConnected === null && sessionStorage.getItem('jwt')) {
             dispatch(reLoginAsync());
         }
 
     }, [query]);
 
+    // function controller to get all products 
     const handleGetProducts = () => {
         dispatch(getProductsAsync())
     }
 
+    // function controller to get all products by query
     const handleGetProductsByQuery = (query) => {
         dispatch(getProductsByQueryAsync(query))
     }
 
+    //function that validates fields and emulates the query to an API about the availability of products
     const handleCheckAvailability = () => {
         if (id === '' || amount === '') {
             setValidationMessage('Debe seleccionar un producto y digitar la cantidad solicitada')
@@ -59,6 +67,7 @@ export function Product() {
         }
     }
 
+    //function that returns the component states to the initial state
     const handleClean = () => {
         setId('')
         setAmount('')
