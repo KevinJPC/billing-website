@@ -56,15 +56,14 @@ export function Billing() {
     const [customerCountry, setCustomerCountry] = useState('');
     const [customerAddress, setCustomerAddress] = useState('');
     const [customerPostalCode, setCustomerPostalCode] = useState('');
-
-    const [query, setQuery] = useState('');
     const [validationMessage, setValidationMessage] = useState('');
     const [validationMessage2, setValidationMessage2] = useState('');
     const [validationMessage3, setValidationMessage3] = useState('');
     const [validationMessage4, setValidationMessage4] = useState('');
     const [validationMessage5, setValidationMessage5] = useState('');
+    const [query, setQuery] = useState('');
 
-
+    //this useeffect runs when the query and "billRegistered" state changes
     useEffect(function () {
 
         if (query === '') {
@@ -104,13 +103,17 @@ export function Billing() {
 
     }, [query, billRegistered]);
 
+    //Function controller to get all products 
     const handleGetProducts = () => {
         dispatch(getProductsAsync())
     }
 
+    //Function controller to get all products by query
     const handleGetProductsByQuery = (query) => {
         dispatch(getProductsByQueryAsync(query))
     }
+
+    //Function to aggregate the product
     const handleAddProduct = (id, price, name) => {
 
         for (let i = 0; i < customerProduct.length; i++) {
@@ -125,6 +128,7 @@ export function Billing() {
         setCustomerProduct(customerProductArray);
     }
 
+    //Function to disaggregate the product
     const handleMinusProduct = id => {
         let customerProductArray = customerProduct.slice();
 
@@ -137,6 +141,7 @@ export function Billing() {
 
     }
 
+    //function to add quantity to product
     const handleAddProductAmount = (amount, id) => {
         let customerProductArray = customerProduct.slice();
 
@@ -149,6 +154,7 @@ export function Billing() {
         setCustomerProduct(customerProductArray);
     }
 
+    //Function to record the bill data
     const handleBilling = (bill) => {
 
         if (customerName === '' || customerLastName === '' || customerIdentification === '' || (paymentMethod == 3 && customerCreditCard === '') || customerPhone === '' || customerCountry === '' ||
@@ -177,6 +183,7 @@ export function Billing() {
 
     }
 
+    //Function to clear each "input" field
     const cleanInputs = () => {
         refCustomerName.current.value = "";
         refCustomerLastName.current.value = "";
@@ -191,6 +198,7 @@ export function Billing() {
         refCustomerIdentification.current.value = "";
     }
 
+    //Functions that validate that the field is numeric
     const justNumberTel = (e) => {
         if (!Number(e) && e !== '') {
             setValidationMessage2('Número de teléfono inválido')
@@ -207,7 +215,7 @@ export function Billing() {
 
     const justNumberID = (e) => {
         if (!Number(e) && e !== '') {
-            setValidationMessage4('Cédula inválido')
+            setValidationMessage4('Cédula inválida')
             setTimeout(() => { setValidationMessage4('') }, 5000);
         }
     }
@@ -219,6 +227,7 @@ export function Billing() {
         }
     }
 
+    //Function that calculates price of the products
     const handleGetTotalPrice = () => {
         let total = 0;
         if (customerProduct.length > 0) {
@@ -230,6 +239,7 @@ export function Billing() {
         return total;
     }
 
+    //Function that calculates the total quantity of the products
     const handleGetTotalAmount = () => {
         let total = 0;
         if (customerProduct.length > 0) {

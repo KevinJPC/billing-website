@@ -7,6 +7,7 @@ const initialState = {
   registered: null,
 };
 
+  //Asynchronous functions to obtain, register and filter bills, as well as update their status
 export const getbillAsync = createAsyncThunk(
   'bill/billGet',
   async (jwt) => {
@@ -42,6 +43,9 @@ export const billSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //respective functions depending on the state of the asynchronous function 
+
+      //getbillAsync
       .addCase(getbillAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -53,6 +57,7 @@ export const billSlice = createSlice({
         }
       })
       
+      //updateStatusBillAsync
       .addCase(updateStatusBillAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -70,6 +75,7 @@ export const billSlice = createSlice({
 
       })
 
+      //registerBillAsync
       .addCase(registerBillAsync.pending, (state) => {
         state.status = 'loading';
       })

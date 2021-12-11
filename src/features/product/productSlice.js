@@ -12,8 +12,6 @@ export const getProductsAsync = createAsyncThunk(
   async () => {
     const response = await fetchGetProducts();
     return response;
-
-
   }
 );
 

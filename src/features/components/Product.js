@@ -10,7 +10,7 @@ import { Navigate } from 'react-router-dom';
 
 export function Product() {
 
-    //selector
+    //selectors
     const products = useSelector(selectProduct);
     const productStatus = useSelector(selectProductStatus);
 

@@ -8,7 +8,7 @@ import { Spinner } from './Spinner';
 
 
 export function Login() {
-    //selector
+    //selectors
     const user = useSelector(selectUser);
     const userStatus = useSelector(selectUserStatus);
     const userError = useSelector(selectUserError);

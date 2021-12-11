@@ -1,4 +1,4 @@
-
+//fetch to obtain all registered bills, for this it obtains and sends the user's jwt
 export function billGet() {
 
     let jwt = sessionStorage.getItem('jwt');
@@ -15,6 +15,7 @@ export function billGet() {
     )
 }
 
+//fetch to register bills, for this it obtains and sends the user's jwt
 export function billRegister(bill) {
 
     let jwt = sessionStorage.getItem('jwt');
@@ -32,6 +33,8 @@ export function billRegister(bill) {
         })
     )
 }
+
+//fetch to update bills status, for this it obtains and sends the user's jwt
 export function updateStatusBill(bill) {
 
     let jwt = sessionStorage.getItem('jwt');
