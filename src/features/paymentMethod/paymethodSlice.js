@@ -5,7 +5,8 @@ const initialState = {
     value: [],
     status: 'idle',
   };
-  
+
+  //asynchronous functions to get payment methods and filter them 
   export const getPaymentMethodAsync = createAsyncThunk(
     'paymentMethods/fetchGet',
     async () => {
@@ -23,6 +24,9 @@ const initialState = {
 
     extraReducers: (builder) => {
       builder
+      // respective functions depending on the state of the asynchronous function
+
+      // getPaymentMethodAsync
         .addCase(getPaymentMethodAsync.pending, (state) => {
           state.status = 'loading';
         })
@@ -39,6 +43,8 @@ const initialState = {
   
   export const { } = paymentMethodSlice.actions;
 
+
+ //this helps to select de payment and the state 
   export const selectPaymentMethod = (state) => state.paymentMethod.value;
   
   export const selectPaymentMethodStatus = (state) => state.paymentMethod.status;

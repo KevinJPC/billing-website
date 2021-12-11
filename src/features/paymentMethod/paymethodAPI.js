@@ -1,3 +1,4 @@
+// fetch to obtain all registered payment methods, for this it obtains and sends the user's jwt
 export function fetchGetPaymentMethods() {
 
     let jwt = sessionStorage.getItem('jwt');

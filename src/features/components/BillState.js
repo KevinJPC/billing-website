@@ -9,30 +9,36 @@ import {
     selectUser, selectUserStatus, reLoginAsync, selectUserConnected
 } from '../user/userSlice';
 
+//Component's Function
 export function BillState() {
 
+    //selector 
     const bills = useSelector(selectBill);
     const billStatus = useSelector(selectBillStatus);
-    const dispatch = useDispatch();
-
     const user = useSelector(selectUser);
     const userStatus = useSelector(selectUserStatus);
     const userConnected = useSelector(selectUserConnected);
 
+    //dispatch
+    const dispatch = useDispatch();
 
     useEffect(function () {
+
         handleGetBills();
 
+        //will make sure that the jwt to corrobarate 
         if (userConnected === null && sessionStorage.getItem('jwt')) {
             dispatch(reLoginAsync());
         }
 
     }, []);
 
+    //function controller to get all bills
     const handleGetBills = () => {
         dispatch(getbillAsync())
     }
 
+    // function controller to update the state of bills
     const handleUpdateStatusBill = (bill) => {
 
         let billObj = { ...bill };
@@ -40,12 +46,14 @@ export function BillState() {
         dispatch(updateStatusBillAsync(billObj))
     }
 
+    //function controller to get all the date of each bill
     const handleGetDate = (dateStr) => {
         let dateObj = new Date(dateStr);
         let dateFormat = dateObj.toLocaleString()
         return dateFormat
     }
 
+    //this is the view of this module 
     return (
         <div>
             {userConnected === true ?
