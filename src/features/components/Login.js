@@ -50,11 +50,11 @@ export function Login() {
                         </h2>
                         <div className="mb-3">
                             <label className="form-label">Usuario</label>
-                            <input type="text" className="form-control" onChange={e => setIdentifier(e.target.value)} />
+                            <input type="text" className="form-control" placeholder='Prueba con: test' onChange={e => setIdentifier(e.target.value)} />
                         </div>
                         <div className="mb-2">
                             <label className="form-label">Contraseña</label>
-                            <input type="password" className="form-control" onChange={e => setPassword(e.target.value)} />
+                            <input type="password" className="form-control" placeholder='Prueba con: test1234' onChange={e => setPassword(e.target.value)} />
                         </div>
 
                         {
